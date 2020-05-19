@@ -1,0 +1,26 @@
+1. Incoming transactions - Dataset with transaction elements - variable elements:
+    1.1 initAnibodyPool(N)
+        1.1.1 input: pool size N
+        1.1.2 output: list of antibodies
+        1.1.3 type_i class Ab - objects are actual antibodies
+2. Bcells - program element; Antigen - 1 transaction; An tigen to Bcell afinity (selection based on this)
+3. Affinity function
+4. Sort and Select higher affinity bcells (n - selection pool size)
+5. Clone/mutate selection pool elements - use clonal factor beta (var)
+6. Kill unstimulated (lower affinity) Bcells - degree/bar for less affinity logic
+7. replacement set d - replace d no of lowest affinity anibodies with random ones
+8. random body generating function (d)
+9. during creation of clone set:
+    9.1.1 increase no of clones and decrease degree of mutation as affinity increases
+    9.1.2 replace best new generation bcell(p) with best antiBody pool(q) if affinity(p)>affinity(q)
+10. replace the d lowest affinity bcells by new generated bcells
+note: Antigen = 1; kNN for affinity
+define ab ag structure
+
+
+Affinity - Hamming Distance Binary
+         - Euclidean Distance and Weighted Average
+         - Cosine
+
+m - memory pool
+r - reminder pool
