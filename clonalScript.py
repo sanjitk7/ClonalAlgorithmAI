@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 from scipy.spatial import distance
 from copy import copy
+from antibody import Antibody
 
-def affinity(ag,ab,algo):
+def affinity(ag,ab,algo=0):
     if (algo==0):
         return distance.euclidean(ag,ab)
     elif (algo==1):
@@ -58,76 +59,89 @@ def mutateOne(ab,abAttrNames,mr,n):
             print("TypeError in Ab Attr", attrVal)
     return mutatedAb
 
+# Creates antibodies or antigen population
+def instantiate_population(PoolList):
+    # list of antibodies as objects
+    populationList = []
+    for vector in PoolList:
+        # Class Antibody creates Ab or Ag (similar structure)
+        populationList.append(Antibody(vector))
+    return populationList
 
-# incorporate some attribute wise explicit data manipulation feature later
+if (__name__=="__main__"):
+    # n = int(input("Enter 'n' : "))
+    # beta = float(input("Enter beta : "))
+    n=3
+    beta=0.5
+    d = 5
+    G = 20
+
+    #abPopulation
+    df_ab = pd.read_csv("cardDatasetCsv.csv")
+    # df_ag = pd.DataFrame(agPopulation)
+    abPoolList = df_ab.values.tolist()
+    abPopulation = instantiate_antibody_population(abPoolList)
+
+    df_ag = pd.read_csv("attackVector.csv")
+    agPoolList = df_ag.values.tolist()
+    agPopulation = instantiate_antibody_population(agPoolList)
+
+    ##t_id,indiscriminate_purchase,purchase_total_compared_customer,expensive_items,card_present,swipe_or_chip,sign_or_pin,freq_recent_purchase,easy_resale_items,geodist_deviation,known_ip,known_mac,time_abnormality,geodist_ship_deviation,known_browser
+    # agPopulation = [[11,20,30,15,1,1,1,60,50,1,1,1,10,1,1],[12,90,60,30,0,0,1,40,80,50,1,0,50,30,0]]
+
+    N = len(abPoolList)
+    for generation in range(G):
+        print("----------------------------------------------------------------------------------------------------------------------------------------------")
+        print("Generation #",generation+1)
+        print("----------------------------------------------------------------------------------------------------------------------------------------------")
+        for i in range(len(df_ag.index)): #for each antigen Ag do
+            affinityList = []
+            print("-----------------------------------------------------------------------")
+            print("Current Ag : ",list(df_ag.iloc[i]))
+            print("-----------------------------------------------------------------------")
+            for j in range(len(df_ab.index)):
+                affinityList.append(affinity(list(df_ag.iloc[i]),list(df_ab.iloc[j]),1))
+            abPoolSortedList,abPoolSortedDF = makeAbSortPool(affinityList,abPoolList)
+            # print(abPoolSortedDF)
+            top_n = selectHighest_n(abPoolSortedDF,n).values.tolist()
+            # print(top_n)
+            # clone_set = ()
+            currentClonesList = []
+            mutatedClonesList = []
+            for k in range(0,n):
+                currentAb = top_n[k]
+                x = (beta*N)//(k+1)
+                for l in range(int(x)):
+                    currentClonesList.append(copy(currentAb))
+                for currentClone in currentClonesList:
+                    #ID??? is also mutated?????
+                    mutatedClonesList.append(mutateOne(currentClone,[],(k+1)/n,n))
+                currentClonesSet = set(tuple(i) for i in currentClonesList)
+                mutatedClonesSet = set(tuple(i) for i in mutatedClonesList)
+                currentClonesSet.union(mutatedClonesSet)
+                print("Cloned and Unioned with Mutated Ab: ",currentClonesSet)
+                affinityGreatest = 0
+                # Get Ab p with highest affinity p’ from C S
+                for y in currentClonesSet:
+                    if (affinity(list(df_ag.iloc[i]),y,1) > affinityGreatest):
+                        affinityGreatestAbCS = y
+                # Get Ab q with highest affinity q’ from
+                # If p’ is greater than q’ replace q per p;
+                if (affinityGreatest > affinityList[0]):
+                    abPoolSortedList[0]=affinityGreatestAbCS
+            # Replace the d lowest affinity by new generated Abs
+            # for kk in range(n,N):
+                # replace ab in mempool with new random antibody
+            
+                # print("Clone Set for n=",k+1," : ",currentClones)
+                # print("Mutated Set for n=",k+1," : ",mutatedClones)
+                
+
+                # print("mutation rate: ",float(k+1/n))
+
+            
 
 
 
-# n = int(input("Enter 'n' : "))
-# beta = float(input("Enter beta : "))
-n=3
-beta=0.5
-d = 5
-
-##t_id,indiscriminate_purchase,purchase_total_compared_customer,expensive_items,card_present,swipe_or_chip,sign_or_pin,freq_recent_purchase,easy_resale_items,geodist_deviation,known_ip,known_mac,time_abnormality,geodist_ship_deviation,known_browser
-agPopulation = [[11,20,30,15,1,1,1,60,50,1,1,1,10,1,1],[12,90,60,30,0,0,1,40,80,50,1,0,50,30,0]]
-
-#abPopulation
-df_ab = pd.read_csv("cardDatasetCsv.csv")
-
-df_ag = pd.DataFrame(agPopulation)
-
-abPoolList = df_ab.values.tolist()
-agPoolList = df_ag.values.tolist()
-
-N = len(abPoolList)
-
-for i in range(len(df_ag.index)): #for each antigen Ag do
-    affinityList = []
-    print("-----------------------------------------------------------------------")
-    print("Current Ag : ",list(df_ag.iloc[i]))
-    print("-----------------------------------------------------------------------")
-    for j in range(len(df_ab.index)):
-        affinityList.append(affinity(list(df_ag.iloc[i]),list(df_ab.iloc[j]),1))
-    abPoolSortedList,abPoolSortedDF = makeAbSortPool(affinityList,abPoolList)
-    # print(abPoolSortedDF)
-    top_n = selectHighest_n(abPoolSortedDF,n).values.tolist()
-    # print(top_n)
-    # clone_set = ()
-    currentClonesList = []
-    mutatedClonesList = []
-    for k in range(0,n):
-        currentAb = top_n[k]
-        x = (beta*N)//(k+1)
-        for l in range(int(x)):
-            currentClonesList.append(copy(currentAb))
-        for currentClone in currentClonesList:
-            mutatedClonesList.append(mutateOne(currentClone,[],(k+1)/n,n))
-        currentClonesSet = set(tuple(i) for i in currentClonesList)
-        mutatedClonesSet = set(tuple(i) for i in mutatedClonesList)
-        currentClonesSet.union(mutatedClonesSet)
-        print("Cloned and Unioned with Mutated Ab: ",currentClonesSet)
-        affinityGreatest = 0
-        # Get Ab p with highest affinity p’ from C S
-        for y in currentClonesSet:
-            if (affinity(list(df_ag.iloc[i]),y,1) > affinityGreatest):
-                affinityGreatestAbCS = y
-        # Get Ab q with highest affinity q’ from
-        # If p’ is greater than q’ replace q per p;
-        if (affinityGreatestAbCS > abPoolSortedList[0]):
-            abPoolSortedList[0]=affinityGreatestAbCS
-    # Replace the d lowest affinity by new generated Abs
-        
-        #ID???
-        # print("Clone Set for n=",k+1," : ",currentClones)
-        # print("Mutated Set for n=",k+1," : ",mutatedClones)
-        
-
-        # print("mutation rate: ",float(k+1/n))
-
-        
-
-
-
-# print(sortedAff)
-# top_n
+    # print(sortedAff)
+    # top_n
