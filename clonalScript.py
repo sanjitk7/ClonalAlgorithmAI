@@ -1,28 +1,19 @@
 import pandas as pd
 import numpy as np
-from scipy.spatial import distance
 from copy import copy
 from antibody import Antibody
-
-def affinity(ag,ab,algo=0):
-    if (algo==0):
-        return distance.euclidean(ag,ab)
-    elif (algo==1):
-        return distance.cosine(ag,ab)
-    else:
-        print("invalid selector")
-        return None
+from affinity import affinity
 
 def makeAbSortedDF(abPoolList):
     abSortedPool = pd.DataFrame(abPoolList)
     abSortedPool.columns = df_ab.columns
     return abSortedPool
 
-def makeAbSortPool(affinityList, abPoolList):
-    yx = list(zip(affinityList, abPoolList))
+def makeAbSortPool(affinityList, abPopulation):
+    yx = list(zip(affinityList, abPopulation))
     yx.sort()
     abPool_sorted = [x for y, x in yx]
-    return abPool_sorted, makeAbSortedDF(abPool_sorted)
+    return abPool_sorted
 
 def selectHighest_n(abPoolSortedDF,n):
 #     abPoolSortedDF_n = abPoolSortedDF.index < n
@@ -71,20 +62,21 @@ def instantiate_population(PoolList):
 if (__name__=="__main__"):
     # n = int(input("Enter 'n' : "))
     # beta = float(input("Enter beta : "))
-    n=3
-    beta=0.5
+    beta=0.5 # Clone Factor
     d = 5
-    G = 20
+    G = 20 # Number of generations
 
     #abPopulation
     df_ab = pd.read_csv("cardDatasetCsv.csv")
     # df_ag = pd.DataFrame(agPopulation)
     abPoolList = df_ab.values.tolist()
-    abPopulation = instantiate_antibody_population(abPoolList)
+    abPopulation = instantiate_population(abPoolList)
+
+    n = len(abPopulation)//3
 
     df_ag = pd.read_csv("attackVector.csv")
     agPoolList = df_ag.values.tolist()
-    agPopulation = instantiate_antibody_population(agPoolList)
+    agPopulation = instantiate_population(agPoolList)
 
     ##t_id,indiscriminate_purchase,purchase_total_compared_customer,expensive_items,card_present,swipe_or_chip,sign_or_pin,freq_recent_purchase,easy_resale_items,geodist_deviation,known_ip,known_mac,time_abnormality,geodist_ship_deviation,known_browser
     # agPopulation = [[11,20,30,15,1,1,1,60,50,1,1,1,10,1,1],[12,90,60,30,0,0,1,40,80,50,1,0,50,30,0]]
@@ -94,16 +86,24 @@ if (__name__=="__main__"):
         print("----------------------------------------------------------------------------------------------------------------------------------------------")
         print("Generation #",generation+1)
         print("----------------------------------------------------------------------------------------------------------------------------------------------")
-        for i in range(len(df_ag.index)): #for each antigen Ag do
+        print("Ag Population Size:",len(agPopulation))
+        for i in range(len(agPopulation)): #for each antigen Ag do
             affinityList = []
             print("-----------------------------------------------------------------------")
-            print("Current Ag : ",list(df_ag.iloc[i]))
+            print("Current Ag : ",agPopulation[i].toString())
             print("-----------------------------------------------------------------------")
-            for j in range(len(df_ab.index)):
-                affinityList.append(affinity(list(df_ag.iloc[i]),list(df_ab.iloc[j]),1))
-            abPoolSortedList,abPoolSortedDF = makeAbSortPool(affinityList,abPoolList)
+            for j in range(1,len(df_ab.index)):
+                # print("ag lis:",agPopulation[i].get_properties_as_list())
+                # print("ab lis:",abPopulation[j].get_properties_as_list())
+                affinityList.append(affinity(agPopulation[i],abPopulation[j],"cosine"))
+            print("Affinity List: ",affinityList)
+            abPoolSortedList = makeAbSortPool(affinityList,abPopulation)
+            print("Sorted AntiBodies: ",abPoolSortedList)
+
             # print(abPoolSortedDF)
-            top_n = selectHighest_n(abPoolSortedDF,n).values.tolist()
+            top_n = abPoolSortedList[:n]
+
+            # -------------------------- Stopped Here
             # print(top_n)
             # clone_set = ()
             currentClonesList = []
@@ -123,7 +123,7 @@ if (__name__=="__main__"):
                 affinityGreatest = 0
                 # Get Ab p with highest affinity p’ from C S
                 for y in currentClonesSet:
-                    if (affinity(list(df_ag.iloc[i]),y,1) > affinityGreatest):
+                    if (affinity(list(df_ag.iloc[i]),y,"cosine") > affinityGreatest):
                         affinityGreatestAbCS = y
                 # Get Ab q with highest affinity q’ from
                 # If p’ is greater than q’ replace q per p;
