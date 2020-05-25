@@ -162,6 +162,9 @@ class Antibody:
         self.__known_browser = value
     known_browser  = property(get_known_browser, set_known_browser)
 
+    def hash(self):
+        pass
+
     def toString(self):
         return (str(self.__id) + ":" + "tid:" + str(self.__t_id) + ":[ INDP:" + str(self.__indiscriminate_purchase) + ',PTRS:' + 
         str(self.__purchase_total_relative_score) + ',EIS:' + str(self.__expensive_items_score) + ',CPS:' + 

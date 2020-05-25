@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from copy import copy
+from copy import deepcopy
 from antibody import Antibody
 from affinity import affinity
 
@@ -24,9 +24,10 @@ def selectHighest_n(abPoolSortedDF,n):
 #ip: clone list of current Ab
 #op: list of mutated Ab with current mutation rate
 def mutateOne(ab,abAttrNames,mr,n):
+    abList = ab.get_properties_as_list()
     mutatedAb = []
     scaled_mr = 7*(mr - 0)/n-0 #scaled to 0-7 to flip bits appropriately because range of the int colums is always 0-100 an len(bin(100))=7
-    for attrVal in ab:
+    for attrVal in abList:
         if(type(attrVal)==int):
             binAttrVal = f'{attrVal:07b}'
             newBinAttrVal = list(binAttrVal)
@@ -39,7 +40,7 @@ def mutateOne(ab,abAttrNames,mr,n):
             mutatedAb.append(mutatedAttr)
         elif(type(attrVal)==bool):
             if (scaled_mr > 3.5):
-                if (attrVal == 1):
+                if (attrVal == True):
                     mutatedAttr = 0
                 else:
                     mutatedAttr = 1
@@ -48,7 +49,8 @@ def mutateOne(ab,abAttrNames,mr,n):
                 # print("No Change req as not enough mr")
         else:
             print("TypeError in Ab Attr", attrVal)
-    return mutatedAb
+
+    return Antibody(mutatedAb)
 
 # Creates antibodies or antigen population
 def instantiate_population(PoolList):
@@ -102,8 +104,6 @@ if (__name__=="__main__"):
 
             # print(abPoolSortedDF)
             top_n = abPoolSortedList[:n]
-
-            # -------------------------- Stopped Here
             # print(top_n)
             # clone_set = ()
             currentClonesList = []
@@ -112,14 +112,19 @@ if (__name__=="__main__"):
                 currentAb = top_n[k]
                 x = (beta*N)//(k+1)
                 for l in range(int(x)):
-                    currentClonesList.append(copy(currentAb))
+                    currentClonesList.append(deepcopy(currentAb))
+                print("current clones after cloning: ",currentClonesList)
                 for currentClone in currentClonesList:
                     #ID??? is also mutated?????
                     mutatedClonesList.append(mutateOne(currentClone,[],(k+1)/n,n))
-                currentClonesSet = set(tuple(i) for i in currentClonesList)
-                mutatedClonesSet = set(tuple(i) for i in mutatedClonesList)
+                # ------------- MUTATE FN NEEDS RANDOMNESS ----------------- #
+                print("mutated Ab: ",mutatedClonesList)
+                currentClonesSet = set(tuple(i.get_properties_as_list()) for i in currentClonesList)
+                print("current clones set: ",currentClonesSet)
+                mutatedClonesSet = set(tuple(i.get_properties_as_list()) for i in mutatedClonesList)
                 currentClonesSet.union(mutatedClonesSet)
                 print("Cloned and Unioned with Mutated Ab: ",currentClonesSet)
+                exit()
                 affinityGreatest = 0
                 # Get Ab p with highest affinity p’ from C S
                 for y in currentClonesSet:
