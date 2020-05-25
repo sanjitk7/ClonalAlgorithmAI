@@ -2,6 +2,7 @@ import unittest
 from clonalScript import instantiate_population,makeAbSortPool
 from antibody import Antibody
 from affinity import affinity
+from mutation import mutateOneAb
 
 # t_id
 # indiscriminate_purchase
@@ -59,6 +60,11 @@ class TestClonalAlgorithm(unittest.TestCase):
         print("expected:",expected)
         affinityList = [0.1,0.2,0.3]
         self.assertEqual(makeAbSortPool(affinityList,cellList),expected)
+
+    def test_mutate(self):
+        cell = Antibody([1, 10, 1, 2, 0, 0, 0, 1, 5, 30, 1, 0, 1, 10, 1])
+        print(mutateOneAb(cell))
+        
 
 if (__name__=="__main__"):
     unittest.main()

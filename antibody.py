@@ -172,3 +172,10 @@ class Antibody:
             ',FRPS:' + str(self.__freq_recent_purchase_score) + ',ERIS:' + str(self.__easy_resale_items_score) + 
             ',GDF:' + str(self.__geodist_deviation_factor) + ',KIP:' + str(self.__known_ip) + ',KMAC:' + str(self.__known_mac) +
             ',TAS:' + str(self.__time_abnormality_score) + ',GSD:' + str(self.__geodist_ship_deviation) + ',KBR:' + str(self.__known_browser) + ']')
+        
+    def get_all_numeric(self):
+        return [self.__indiscriminate_purchase, self.__purchase_total_relative_score,self.__expensive_items_score,
+        self.__freq_recent_purchase_score,self.__easy_resale_items_score,self.__geodist_deviation_factor,self.__time_abnormality_score,self.__geodist_ship_deviation]
+
+    def get_all_boolean(self):
+        return [self.__card_present_status,self.__is_swipe_or_chip,self.__is_sign_or_pin,self.__known_ip,self.__known_mac,self.__known_browser]
