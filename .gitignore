@@ -2,3 +2,4 @@
 .vscode
 .pyc
 .cpyc
+__pycache__

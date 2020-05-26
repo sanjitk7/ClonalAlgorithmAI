@@ -3,6 +3,7 @@ import numpy as np
 from copy import deepcopy
 from antibody import Antibody
 from affinity import affinity
+from mutation import mutateOneAb
 
 def makeAbSortedDF(abPoolList):
     abSortedPool = pd.DataFrame(abPoolList)
@@ -103,37 +104,34 @@ if (__name__=="__main__"):
             print("Sorted AntiBodies: ",abPoolSortedList)
 
             # print(abPoolSortedDF)
+            # Selecting n highest affinity Ab
             top_n = abPoolSortedList[:n]
             # print(top_n)
             # clone_set = ()
+            cloneSet = []
             currentClonesList = []
-            mutatedClonesList = []
             for k in range(0,n):
                 currentAb = top_n[k]
+                # --------------------------Cloning Step----------------------------- #
                 x = (beta*N)//(k+1)
                 for l in range(int(x)):
                     currentClonesList.append(deepcopy(currentAb))
-                print("current clones after cloning: ",currentClonesList)
+                print("Current clones after cloning: ",currentClonesList)
+                # --------------------------Mutation Step----------------------------- #
                 for currentClone in currentClonesList:
-                    #ID??? is also mutated?????
-                    mutatedClonesList.append(mutateOne(currentClone,[],(k+1)/n,n))
-                # ------------- MUTATE FN NEEDS RANDOMNESS ----------------- #
-                print("mutated Ab: ",mutatedClonesList)
-                currentClonesSet = set(tuple(i.get_properties_as_list()) for i in currentClonesList)
-                print("current clones set: ",currentClonesSet)
-                mutatedClonesSet = set(tuple(i.get_properties_as_list()) for i in mutatedClonesList)
-                currentClonesSet.union(mutatedClonesSet)
-                print("Cloned and Unioned with Mutated Ab: ",currentClonesSet)
-                exit()
-                affinityGreatest = 0
-                # Get Ab p with highest affinity p’ from C S
-                for y in currentClonesSet:
-                    if (affinity(list(df_ag.iloc[i]),y,"cosine") > affinityGreatest):
-                        affinityGreatestAbCS = y
-                # Get Ab q with highest affinity q’ from
-                # If p’ is greater than q’ replace q per p;
-                if (affinityGreatest > affinityList[0]):
-                    abPoolSortedList[0]=affinityGreatestAbCS
+                    cloneSet.append(mutateOneAb(currentClone,(k+1)/n))
+                print("Mutated Clones (current clone set): ",cloneSet)
+                #------------------Clone Set Compare and Union with Memory Pool--------#
+                #------------------Get Ab p with highest affinity p’ from C S----------#
+                highestCloneAff = 0
+                for clone in cloneSet:
+                    currentCloneAff = affinity(agPopulation[i],clone,"cosine")
+                    if (highestCloneAff < currentCloneAff):
+                        highestAffClone = clone
+                print("Highest Affinity Clone in current clone set: ",highestAffClone.get_properties_as_list())
+                #------------------Get Ab q with highest affinity q’ from---------------#
+                #------------------If p’ is greater than q’ replace q per p------------#
+                
             # Replace the d lowest affinity by new generated Abs
             # for kk in range(n,N):
                 # replace ab in mempool with new random antibody

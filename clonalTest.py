@@ -61,10 +61,18 @@ class TestClonalAlgorithm(unittest.TestCase):
         affinityList = [0.1,0.2,0.3]
         self.assertEqual(makeAbSortPool(affinityList,cellList),expected)
 
-    def test_mutate(self):
+    def test_get_set_attr(self):
         cell = Antibody([1, 10, 1, 2, 0, 0, 0, 1, 5, 30, 1, 0, 1, 10, 1])
-        print(mutateOneAb(cell))
-        
+        numAttr = cell.get_all_numeric()
+        boolAttr = cell.get_all_boolean()
+        self.assertEqual(numAttr,[10,1,2,1,5,30,1,10])
+        self.assertEqual(boolAttr,[0,0,0,1,0,1])
+        numAttrToSet = [20,2,3,4,10,40,23,95]
+        cell.set_all_numeric(numAttrToSet)
+        self.assertEqual(cell.get_properties_as_list(),[1, 20, 2, 3, 0, 0, 0, 4, 10, 40, 1, 0, 23, 95, 1])
+        boolAttrToSet = [1,1,1,1,0,1]
+        cell.set_all_boolean(boolAttrToSet)
+        self.assertEqual(cell.get_properties_as_list(),[1, 20, 2, 3, 1, 1, 1, 4, 10, 40, 1, 0, 23, 95, 1])
 
 if (__name__=="__main__"):
     unittest.main()

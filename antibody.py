@@ -179,3 +179,21 @@ class Antibody:
 
     def get_all_boolean(self):
         return [self.__card_present_status,self.__is_swipe_or_chip,self.__is_sign_or_pin,self.__known_ip,self.__known_mac,self.__known_browser]
+
+    def set_all_numeric(self, lst):
+        self.__indiscriminate_purchase = lst[0]
+        self.__purchase_total_relative_score = lst[1]
+        self.__expensive_items_score = lst[2]
+        self.__freq_recent_purchase_score = lst[3]
+        self.__easy_resale_items_score = lst[4]
+        self.__geodist_deviation_factor = lst[5]
+        self.__time_abnormality_score = lst[6]
+        self.__geodist_ship_deviation = lst[7]
+
+    def set_all_boolean(self,lst):
+        self.__card_present_status = lst[0]
+        self.__is_swipe_or_chip = lst[1]
+        self.__is_sign_or_pin = lst[2]
+        self.__known_ip = lst[3]
+        self.__known_mac = lst[4]
+        self.__known_browser = lst[5]
