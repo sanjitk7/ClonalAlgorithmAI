@@ -35,6 +35,7 @@ $ pip install operator
 $ pip install deap
 $ pip install uuid
 $ pip install unittest
+$ pip install configparser
 ```
 Run unit test to validate the function outputs
 ```

@@ -4,6 +4,7 @@ from copy import deepcopy
 from antibody import Antibody
 from affinity import affinity
 from mutation import mutateOneAb
+import configparser
 import operator
 
 def makeAbSortedDF(abPoolList):
@@ -25,37 +26,6 @@ def selectHighest_n(abPoolSortedDF,n):
     abPoolSortedDF_n = abPoolSortedDF[(abPoolSortedDF.index < n)]
     return abPoolSortedDF_n
 
-#ip: clone list of current Ab
-#op: list of mutated Ab with current mutation rate
-def mutateOne(ab,abAttrNames,mr,n):
-    abList = ab.get_properties_as_list()
-    mutatedAb = []
-    scaled_mr = 7*(mr - 0)/n-0 #scaled to 0-7 to flip bits appropriately because range of the int colums is always 0-100 an len(bin(100))=7
-    for attrVal in abList:
-        if(type(attrVal)==int):
-            binAttrVal = f'{attrVal:07b}'
-            newBinAttrVal = list(binAttrVal)
-            if (newBinAttrVal[int(scaled_mr)]==0):
-                newBinAttrVal[int(scaled_mr)] =1
-            else:
-                newBinAttrVal[int(scaled_mr)]=0
-            newBinAttrVal = "".join(str(digit) for digit in newBinAttrVal)
-            mutatedAttr = int(newBinAttrVal,2)
-            mutatedAb.append(mutatedAttr)
-        elif(type(attrVal)==bool):
-            if (scaled_mr > 3.5):
-                if (attrVal == True):
-                    mutatedAttr = 0
-                else:
-                    mutatedAttr = 1
-                mutatedAb.append(mutatedAttr)
-            # else:
-                # print("No Change req as not enough mr")
-        else:
-            print("TypeError in Ab Attr", attrVal)
-
-    return Antibody(mutatedAb)
-
 # Creates antibodies or antigen population
 def instantiate_population(PoolList):
     # list of antibodies as objects
@@ -68,9 +38,11 @@ def instantiate_population(PoolList):
 if (__name__=="__main__"):
     # n = int(input("Enter 'n' : "))
     # beta = float(input("Enter beta : "))
-    beta=0.5 # Clone Factor
-    d = 5
-    G = 20 # Number of generations
+    cfg = configparser.ConfigParser()
+    cfg.read("config.ini")
+    beta=cfg.getfloat("general","beta") # Clone Factor
+    d = cfg.getint("general","d")
+    G = cfg.getint("general","G")# Number of generations
 
     #abPopulation
     df_ab = pd.read_csv("cardDatasetCsv.csv")
