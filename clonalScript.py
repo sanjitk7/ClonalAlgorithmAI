@@ -45,14 +45,14 @@ if (__name__=="__main__"):
     G = cfg.getint("general","G")# Number of generations
 
     #abPopulation
-    df_ab = pd.read_csv("cardDatasetCsv.csv")
+    df_ab = pd.read_csv("data/cardDatasetCsv.csv")
     # df_ag = pd.DataFrame(agPopulation)
     abPoolList = df_ab.values.tolist()
     abPopulation = instantiate_population(abPoolList)
 
     n = len(abPopulation)//3
 
-    df_ag = pd.read_csv("attackVector.csv")
+    df_ag = pd.read_csv("data/attackVector.csv")
     agPoolList = df_ag.values.tolist()
     agPopulation = instantiate_population(agPoolList)
 
