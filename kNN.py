@@ -15,7 +15,7 @@ def kNN(agVectors):
     labelledVectors = []
 
     # Splitting the Dataset (here antibodies) for testing and training
-    x_train,x_test,y_train,y_test=train_test_split(ccDataList,ccTargetLabel,random_state=0)
+    x_train,x_test,y_train,y_test=train_test_split(ccDataList,ccTargetLabel,random_state=3)
 
     # initialise kNN classifier and fit the model
     knn=KNeighborsClassifier(n_neighbors=1)
@@ -31,8 +31,8 @@ def kNN(agVectors):
         labelledVectors.append(vector)
         print("Predicted fraud class for vector {} : {}".format(vector,ccTargetLabelNames[int(prediction_index)]))
 
-    # print("Test set score (with knn) : {}".format(knn.score(x_test,y_test)))
+    print("Test set score (with knn) : {}".format(knn.score(x_test,y_test)))
     return labelledVectors
 
-classified = kNN([[11,20,30,15,1,1,1,60,50,1,1,1,10,1,1],[12,90,60,30,0,0,1,40,80,50,1,0,50,30,0],[8,12,29,2,0,0,0,43,75,80,1,1,10,40,0]])
-print("classified: ",classified)
+# classified = kNN([[11,20,30,15,1,1,1,60,50,1,1,1,10,1,1],[12,90,60,30,0,0,1,40,80,50,1,0,50,30,0],[8,12,29,2,0,0,0,43,75,80,1,1,10,40,0]])
+# print("classified: ",classified)

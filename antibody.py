@@ -15,6 +15,7 @@ from util import create_uuid
 # time_abnormality_score
 # geodist_ship_deviation
 # known_browser
+# fraud_label
 
 class Antibody:
     def __init__(self,data = []):
@@ -34,6 +35,7 @@ class Antibody:
         self.__time_abnormality_score = data[12]
         self.__geodist_ship_deviation = data[13]
         self.__known_browser = data[14]
+        self.__fraud_label = data[15]
 
     def get_id(self):
         return self.__id
@@ -82,6 +84,9 @@ class Antibody:
 
     def get_known_browser(self):
         return self.__known_browser
+    
+    def get_fraud_label(self):
+        return self.__fraud_label
 
     def get_properties_as_list(self):
         ls = []
@@ -102,6 +107,11 @@ class Antibody:
         ls.append(self.__known_browser)
         return ls
 
+    def get_properties_as_list_with_label(self):
+        without_label = self.get_properties_as_list()
+        with_label = without_label.append(self.get_fraud_label)
+        return with_label
+    
     def set_id(self,value):
         self.__id = value
     id  = property(get_id, set_id)
@@ -162,6 +172,10 @@ class Antibody:
         self.__known_browser = value
     known_browser  = property(get_known_browser, set_known_browser)
 
+    def set_fraud_label(self,value):
+        self.__fraud_label = value
+    fraud_label = property(get_fraud_label,set_fraud_label)
+
     def hash(self):
         pass
 
@@ -171,7 +185,7 @@ class Antibody:
             str(self.__card_present_status) + ',ISOC:'+ str(self.__is_swipe_or_chip) + ',ISOP:' + str(self.__is_sign_or_pin) +
             ',FRPS:' + str(self.__freq_recent_purchase_score) + ',ERIS:' + str(self.__easy_resale_items_score) + 
             ',GDF:' + str(self.__geodist_deviation_factor) + ',KIP:' + str(self.__known_ip) + ',KMAC:' + str(self.__known_mac) +
-            ',TAS:' + str(self.__time_abnormality_score) + ',GSD:' + str(self.__geodist_ship_deviation) + ',KBR:' + str(self.__known_browser) + ']')
+            ',TAS:' + str(self.__time_abnormality_score) + ',GSD:' + str(self.__geodist_ship_deviation) + ',KBR:' + str(self.__known_browser) + ']' + ": FL:" + str(self.__fraud_label))
         
     def get_all_numeric(self):
         return [self.__indiscriminate_purchase, self.__purchase_total_relative_score,self.__expensive_items_score,

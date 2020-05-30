@@ -6,6 +6,7 @@ from affinity import affinity
 from mutation import mutateOneAb
 import configparser
 import operator
+from kNN import kNN
 
 def makeAbSortedDF(abPoolList):
     abSortedPool = pd.DataFrame(abPoolList)
@@ -45,12 +46,13 @@ if (__name__=="__main__"):
     G = cfg.getint("general","G")# Number of generations
 
     #abPopulation
-    df_ab = pd.read_csv("data/cardDatasetCsv.csv")
+    df_ab = pd.read_csv("data/kNNcardDatasetCsv.csv")
     # df_ag = pd.DataFrame(agPopulation)
     abPoolList = df_ab.values.tolist()
     abPopulation = instantiate_population(abPoolList)
 
     n = len(abPopulation)//3
+
 
     df_ag = pd.read_csv("data/attackVector.csv")
     agPoolList = df_ag.values.tolist()
@@ -126,7 +128,13 @@ if (__name__=="__main__"):
                     print("\nReplaced with clone:\n",highestAffClone.toString())
                 else:
                     print("\n****NO REPLACEMENT*****\n")
+            
             #------------------Replace the d lowest affinity by new generated Abs-------#
+
+            # Check if aff(highestAffAb) > threshold aff -> Check no label -> kNN label -> label ag -> next ag
+            # if (highestMemAbAff < thresholdAff):
+                #if (highestMemAb has no label):
+                
             # ????? for now we lets assume to replace 0 antibodies
             # for kk in range(n,N):
                 # replace ab in mempool with new random antibody
