@@ -80,7 +80,7 @@ if (__name__=="__main__"):
             print("\nAg Population Size:\n",len(agPopulation))
             print("\nAg #:\n",i+1)
             # print("\nTop Affinity Antibody in present Generation: ",affinity(agPopulation[i],abPoolSortedList[0],"cosine"))
-            for j in range(1,len(df_ab.index)): 
+            for j in range(0,len(df_ab.index)): 
                 # print("ag lis:",agPopulation[i].get_properties_as_list())
                 # print("ab lis:",abPopulation[j].get_properties_as_list())
                 affinityList.append(affinity(agPopulation[i],abPopulation[j],"cosine"))
@@ -100,7 +100,9 @@ if (__name__=="__main__"):
                 # --------------------------Cloning Step----------------------------- #
                 x = (beta*N)//(k+1)
                 for l in range(int(x)):
-                    currentClonesList.append(deepcopy(currentAb))
+                    # Antibody(currentAb.get_properties_as_list())
+                    newClone  = currentAb.clone()
+                    currentClonesList.append(newClone)
                 print("\nCurrent clones after cloning: \n",currentClonesList)
                 # for ii in currentClonesList:
                 #     print(ii.get_properties_as_list())
@@ -146,8 +148,8 @@ if (__name__=="__main__"):
                 print("$$$$$$$$$$$$$$$ THRESHOLD AFFINITY REACHED $$$$$$$$$$$$$$$")
                 if (highestAffMemAb.get_fraud_label() == -1):
                     # Do KNN classification and set ag label
-                    labelledAg = kNN([agPopulation[i]])
-                    print("Antigen Labelled As: ",labelledAg)
+                    labelledMemAb = kNN([highestAffMemAb.get_properties_as_list()])
+                    print("Highest Aff Mem Ab Labelled As: ",labelledMemAb)
                     # agPopulation[i] = Antibody(labelledAg[0])
                     break
                 else:

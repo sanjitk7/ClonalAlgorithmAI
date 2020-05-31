@@ -37,6 +37,11 @@ class Antibody:
         self.__known_browser = data[14]
         self.__fraud_label = data[15]
 
+    def clone(self):
+        without_label = self.get_properties_as_list()
+        without_label.append(-1)
+        return Antibody(without_label)
+
     def get_id(self):
         return self.__id
 
@@ -109,8 +114,9 @@ class Antibody:
 
     def get_properties_as_list_with_label(self):
         without_label = self.get_properties_as_list()
-        with_label = without_label.append(self.get_fraud_label)
-        return with_label
+        fraud_label =  self.get_fraud_label()
+        without_label.append(fraud_label)
+        return without_label
     
     def set_id(self,value):
         self.__id = value
