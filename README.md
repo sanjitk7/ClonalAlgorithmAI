@@ -1,5 +1,5 @@
 # <span style="color:aqua">ClonalAlgorithmAI</span>
-An Algorithm that emulates AIS - Artificial Immune System  (a type of AI Algorithm) to update existing dataset with a set of update vectors or new incoming data
+An Algorithm that emulates AIS - Artificial Immune System  (a type of AI Algorithm) to update existing dataset with a set of update unlabelled vectors or new incoming data while also classifying the unlabelled vectors.
 
 ## <span style="color:aqua">About</span>
 
@@ -11,7 +11,7 @@ All functions have been unit tested to confirm consistency
 
 ## <span style="color:aqua">Flowchart</span>
 
-![CLONALG FOR CREDIT CARD FRAUD DETECTION](img/clonalg_flowchart.png)
+![CLONALG FOR CREDIT CARD FRAUD DETECTION](img/clonalg_flowchart_knn.png)
 
 ## <span style="color:aqua">Dependancies and Requirements</span>
 
@@ -36,6 +36,7 @@ $ pip install deap
 $ pip install uuid
 $ pip install unittest
 $ pip install configparser
+$ pip install scikit-learn
 ```
 Run unit test to validate the function outputs
 ```
