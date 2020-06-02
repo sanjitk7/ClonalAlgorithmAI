@@ -17,6 +17,7 @@ from util import create_uuid
 # known_browser
 # fraud_label
 
+
 class Antibody:
     def __init__(self,data = []):
         self.__id = create_uuid()

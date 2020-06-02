@@ -22,8 +22,6 @@ def makeAbSortPool(affinityList, abPopulation):
     return abPool_sorted
 
 def selectHighest_n(abPoolSortedDF,n):
-#     abPoolSortedDF_n = abPoolSortedDF.index < n
-#     abPoolSortedDF_n = abPoolSortedDF.index()
     abPoolSortedDF_n = abPoolSortedDF[(abPoolSortedDF.index < n)]
     return abPoolSortedDF_n
 
@@ -56,6 +54,9 @@ if (__name__=="__main__"):
     # n = len(abPopulation)//3
     n = cfg.getint("general","n")
 
+    # output labelled Ag
+    labelledVectorsList = []
+
 
     df_ag = pd.read_csv("data/attackVector.csv")
     agPoolList = df_ag.values.tolist()
@@ -81,8 +82,6 @@ if (__name__=="__main__"):
             print("\nAg #:\n",i+1)
             # print("\nTop Affinity Antibody in present Generation: ",affinity(agPopulation[i],abPoolSortedList[0],"cosine"))
             for j in range(0,len(df_ab.index)): 
-                # print("ag lis:",agPopulation[i].get_properties_as_list())
-                # print("ab lis:",abPopulation[j].get_properties_as_list())
                 affinityList.append(affinity(agPopulation[i],abPopulation[j],"cosine"))
                 # keep in mind that the affinity here is literally the distance. So More the distance, lesser the affinity
                 # might have to consider doing (1 - distance) for affinity later
@@ -100,19 +99,14 @@ if (__name__=="__main__"):
                 # --------------------------Cloning Step----------------------------- #
                 x = (beta*N)//(k+1)
                 for l in range(int(x)):
-                    # Antibody(currentAb.get_properties_as_list())
                     newClone  = currentAb.clone()
                     currentClonesList.append(newClone)
                 print("\nCurrent clones after cloning: \n",currentClonesList)
-                # for ii in currentClonesList:
-                #     print(ii.get_properties_as_list())
                 # --------------------------Mutation Step----------------------------- #
                 for currentClone in currentClonesList:
                     cloneSet.append(mutateOneAb(currentClone,(k+1)/n))
                     # mutation doest alter tid so we might get duplicates
                 print("\nMutated Clones (current clone set): \n",cloneSet)
-                # for jj in cloneSet:
-                #     print(jj.get_properties_as_list())
                 #------------------Clone Set Compare and Union with Memory Pool--------#
                 #------------------Get Ab p with highest affinity p’ from C S----------#
                 highestCloneAff = 1
@@ -141,7 +135,7 @@ if (__name__=="__main__"):
                 else:
                     print("\n****NO REPLACEMENT*****\n")
             
-            #------------------Replace the d lowest affinity by new generated Abs-------#
+            classificationDone = False
 
             # Check if aff(highestAffAb) > threshold aff -> Check no label -> kNN label -> label ag -> next ag
             if (highestMemAbAff < thresholdAff):
@@ -150,26 +144,27 @@ if (__name__=="__main__"):
                     # Do KNN classification and set ag label
                     labelledMemAb = kNN([highestAffMemAb.get_properties_as_list()])
                     print("Highest Aff Mem Ab Labelled As: ",labelledMemAb)
-                    # agPopulation[i] = Antibody(labelledAg[0])
-                    break
+                    highestMemAbLabelled = Antibody(labelledMemAb[0])
+                    agPopulation[i].set_fraud_label(highestMemAbLabelled.get_fraud_label())
+                    labelledVectorsList.append(agPopulation[i])
+                    classificationDone = True
+                    
                 else:
                     agPopulation[i].set_fraud_label(highestAffMemAb.get_fraud_label())
-                    print("Antigen Labelled As: ",agPopulation[i].toString())
-                    #terminate CLONALG for this Ag
-                    break
-
-            # if (generation+1>5):
-            #     exit()
-
-                
-            # ????? for now we lets assume to replace 0 antibodies
-            # for kk in range(n,N):
-                # replace ab in mempool with new random antibody
-
+                    print("Labelled Antigen: ",agPopulation[i].toString())
+                    labelledVectorsList.append(agPopulation[i])
+                    classificationDone = True
+        
+            # Once Classification is done go to next antigen to classify
+            if (classificationDone):
+                break
             
 
 
+    print("\n%%%%%%%OUTPUT%%%%%%%%%%\nThe Labelled Antigen Are: \n")
+    for kk in range(len(labelledVectorsList)):
+        print("Antigen Item # ",kk," :",labelledVectorsList[kk].toString())
 
-    # print(sortedAff)
-    # top_n
-    # NEXT STEPS -> USE CURRENT ABPOPULATION IN KNN -> REVIEW WHOLE ALG (REPLACEMENT SPS)
+    print("\n%%%%%%%The Antibody Pool after the Algorithm%%%%%%%\n")
+    for ab in abPopulation:
+        print(ab.toString())

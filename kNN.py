@@ -24,11 +24,12 @@ def kNN(agVectors): #abPopulation add arg
     knn=KNeighborsClassifier(n_neighbors=1)
     knn.fit(x_train,y_train)
 
+
     # classify a new vector (the to be antigen)
     for vector in agVectors:
         trimVector = deepcopy(vector)
         del(trimVector[0])
-        del(trimVector[14])
+        # del(trimVector[14])
         x_new_to_classify=np.array([trimVector])
         prediction_index=knn.predict(x_new_to_classify)
         vector.append(int(prediction_index))

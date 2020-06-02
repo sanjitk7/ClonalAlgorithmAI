@@ -8,4 +8,5 @@ def affinity(ag,ab,algo="euclidean"):
     else:
         print("invalid selector")
         return None
+        
 

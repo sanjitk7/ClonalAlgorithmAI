@@ -1,3 +1,4 @@
 t_id,indiscriminate_purchase,purchase_total_compared_customer,expensive_items,card_present,swipe_or_chip,sign_or_pin,freq_recent_purchase,easy_resale_items,geodist_deviation,known_ip,known_mac,time_abnormality,geodist_ship_deviation,known_browser,fraud_label
-11,0,0,0,1,1,1,0,0,1,1,1,0,1,1,-1
-12,0,0,0,0,0,1,0,0,0,1,0,0,0,0,-1
+12,12,29,2,0,0,0,43,70,80,1,1,10,40,0,-1
+13,50,5,4,0,1,1,1,10,10,1,0,1,30,0,-1
+14,90,60,30,0,0,1,40,80,50,1,0,50,30,-1
