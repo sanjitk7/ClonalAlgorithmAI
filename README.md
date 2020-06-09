@@ -53,8 +53,8 @@ python clonalScript.py
 
 The algorithm states are logged at each step. Sample Working for a single generation
 
-![output_1](img/op1.png)
-![output_2](img/op2.png)
-![output_3](img/op3.png)
+## <span style="color:aqua">For complete details and sample output check report</span>
+
+Click [here](./reportDoc.pdf)
 
 
