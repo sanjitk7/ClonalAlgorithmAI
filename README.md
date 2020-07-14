@@ -9,7 +9,11 @@ A sample dataset of Credit Card Fraud Transactions Dummy Dataset was created to 
 
 All functions have been unit tested to confirm consistency
 
-## <span style="color:aqua">Flowchart</span>
+## <span style="color:aqua">Flowchart: Overall Working</span>
+
+![hybrid-clonalg-diag](img/hybrid-clonalg-diag.png)
+
+## <span style="color:aqua">Flowchart: Algorithm</span>
 
 ![CLONALG FOR CREDIT CARD FRAUD DETECTION](img/clonalg_flowchart_knn.png)
 
